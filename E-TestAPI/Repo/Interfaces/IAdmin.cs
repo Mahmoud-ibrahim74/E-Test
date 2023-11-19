@@ -1,4 +1,5 @@
-﻿using E_TestAPI.Identity;
+﻿using E_TestAPI.DTO;
+using E_TestAPI.Identity;
 using E_TestAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,6 +9,12 @@ namespace E_TestAPI.Repo.Interfaces
 {
     public interface IAdmin
     {
+
+
+
+
+
+
         #region StudentClassCRUD
         Task<List<StudentClass>> GetAllStudentClass();
         Task<int> AddStudentClass(StudentClass studentClass);

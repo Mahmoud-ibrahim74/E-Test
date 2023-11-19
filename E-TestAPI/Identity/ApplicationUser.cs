@@ -12,7 +12,8 @@ namespace E_TestAPI.Identity
 		[Column(TypeName = "nvarchar")]
         public string Address { get; set; }
 		public string ImageUrl { get; set; }
-		public int ClassId { get; set; }
-		public StudentClass StudentClass { get; set; }
+		[ForeignKey(nameof(StudentClassId))]
+		public int StudentClassId { get; set; }
+        public StudentClass StudentClass { get; set; }
 	}
 }

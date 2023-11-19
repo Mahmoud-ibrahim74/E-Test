@@ -2,6 +2,7 @@ using E_TestAPI.Context;
 using E_TestAPI.Identity;
 using E_TestAPI.Repo;
 using E_TestAPI.Repo.Interfaces;
+using HotelAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_TestAPI
@@ -18,7 +19,7 @@ namespace E_TestAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-			builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionDefault")));
+            builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionDefault")));
             builder.Services.AddCors(CoresService =>
             {
                 CoresService.AddPolicy("MyPolicy", coresPolicy =>
@@ -28,16 +29,17 @@ namespace E_TestAPI
             });
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-			{
-				options.Password.RequireDigit = false;
-				options.Password.RequireLowercase = false;
-				options.Password.RequireNonAlphanumeric = false;
-				options.Password.RequireUppercase = false;
-				options.Password.RequiredLength = 6;
-				options.Password.RequiredUniqueChars = 0;
-			}).AddEntityFrameworkStores<AppDbContext>();
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 0;
+            }).AddEntityFrameworkStores<AppDbContext>();
             builder.Services.AddScoped<IAdmin, AdminRepo>();
-			var app = builder.Build();
+            builder.Services.AddScoped<IAccount, AccountRepo>();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
