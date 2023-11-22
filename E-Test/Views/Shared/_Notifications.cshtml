@@ -1,5 +1,4 @@
-﻿
-@*
+﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
 <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
@@ -10,35 +9,29 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.31/sweetalert2.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.31/sweetalert2.min.js"></script>
 @{
-    @if (TempData["order_added"] != null)
+    @if (TempData["loginAuth"] != null)
     {
-        <script>
-            Swal.fire(
-                'Success !',
-                '@TempData["order_added"]',
-                'success',
-            )
-        </script>
+        @if (TempData["loginAuth"].ToString().Contains("username or password incorrect"))
+        {
+            <script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "@TempData["loginAuth"].ToString()",
+                });
+            </script>
+        }
+        @if (TempData["loginAuth"].ToString().Contains("Something error,please try again"))
+        {
+            <script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "@TempData["loginAuth"].ToString()",
+                });
+            </script>
+        }
     }
-    @if (TempData["book_added"] != null)
-    {
-        <script>
-            Swal.fire(
-                'Success !',
-                '@TempData["book_added"]',
-                'success',
-            )
-        </script>
-    }
-    @if (TempData["errBooking"] != null)
-    {
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '@TempData["errBooking"]'
-            })
-        </script>
-    }
+
 }
 

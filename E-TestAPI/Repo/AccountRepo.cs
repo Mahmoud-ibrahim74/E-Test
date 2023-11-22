@@ -48,7 +48,7 @@ namespace HotelAPI.Repositories
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             await AddUserRole(user.Id, model.roleType);
-            await CreateUserToken(user.Id, model.roleType, _config);
+            await CreateUserToken(user.Id, _config);
             return result;
         }
 
@@ -63,11 +63,14 @@ namespace HotelAPI.Repositories
         #endregion
 
         #region Read oprtations 
-
+        public async Task<List<ApplicationRole>> GetAllRoles()
+        {
+            return await _roleManager.Roles.ToListAsync();
+        }
         #endregion
 
         #region Authentication Area
-        public async Task<string> AuthorizeUser(string username, string password,string roleType, IConfiguration config)
+        public async Task<string> AuthUser(string username, string password, IConfiguration config)
         {
             var getUser = await _userManager.FindByNameAsync(username);
             if (getUser != null)
@@ -79,31 +82,41 @@ namespace HotelAPI.Repositories
                     if (userToken != null)
                     {
                         var decodeToken = new JwtSecurityTokenHandler().ReadToken(userToken); // decode user token
+                        #region Check Token expiration
                         if (decodeToken.ValidTo <= DateTime.Now) // check token expiration
                         {
                             if (await DeleteUserToken(getUser)) // delete expired token
                             {
-                                return await CreateUserToken(getUser.Id, roleType, config); /*then create new UserToken*/
+                                return await CreateUserToken(getUser.Id, config); /*then create new UserToken*/
                             }
                         }
                         else // token valid ,then return current
                         {
                             return userToken;
-                        }
+                        } 
+                        #endregion
 
+                    }
+                    else // user doesn't exist any token , so create new token
+                    {
+                        return await CreateUserToken(getUser.Id, config); /*then create new UserToken*/
                     }
                 }
             }
             return null;
         }
-        private async Task<string> CreateUserToken(string userId, string roleName, IConfiguration _config)
+
+
+
+        private async Task<string> CreateUserToken(string userId, IConfiguration _config)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
+            var CurrUser = await _userManager.FindByIdAsync(userId);
+            if (CurrUser != null)
             {
-                var generatedToken = new TokenActions(user, roleName, _config).GenerateToken();
+                var roles = await _userManager.GetRolesAsync(CurrUser);
+                var generatedToken = new TokenActions(CurrUser, roles[0], _config).GenerateToken();
                 var token = new JwtSecurityTokenHandler().WriteToken(generatedToken);
-                var result = await _userManager.SetAuthenticationTokenAsync(user, "E-Test", "AuthenticationUser", token); // save token to AspNetUserTokens table
+                var result = await _userManager.SetAuthenticationTokenAsync(CurrUser, "E-Test", "AuthenticationUser", token); // save token to AspNetUserTokens table
                 return token;
             }
             return null;
@@ -117,6 +130,14 @@ namespace HotelAPI.Repositories
             }
             return false;
         }
+        //private async Task<bool> IsUserRole(string roleName)
+        //{
+        //    var getRoleId = await _userManager.GetUsersInRoleAsync(roleName);
+        //    foreach (var user in getRoleId)
+        //    {
+        //        user.
+        //    }
+        //}
         #endregion
 
 

@@ -1,4 +1,5 @@
 ﻿using E_Test.Models;
+using E_Test.Security;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +7,26 @@ namespace E_Test.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly CookieService _cookieService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(CookieService cookieService)
         {
-            _logger = logger;
+            this._cookieService = cookieService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var getCookieAthun = _cookieService.FindCookies("t_user");
+            if(getCookieAthun == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            else
+            {
+                _cookieService.AddCookieTokenExpired("t_user", getCookieAthun);
+            }
+            var tokenValues = _cookieService.TokenValues(getCookieAthun);
+            return View(tokenValues);
         }
 
         public IActionResult Privacy()

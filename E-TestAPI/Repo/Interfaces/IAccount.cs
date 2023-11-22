@@ -1,4 +1,5 @@
 ﻿using E_TestAPI.DTO;
+using E_TestAPI.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -13,7 +14,8 @@ namespace E_TestAPI.Repo.Interfaces
         #endregion
 
         #region Read oprtations 
-        public Task<string> AuthorizeUser(string username,string password, string roleType, IConfiguration config);
+        public Task<string> AuthUser(string username,string password, IConfiguration config);
+        public Task<List<ApplicationRole>> GetAllRoles();
         #endregion
 
     }

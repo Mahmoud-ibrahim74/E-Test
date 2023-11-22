@@ -30,25 +30,6 @@ namespace E_TestAPI.Controllers
             else
                 return BadRequest(result.Errors.FirstOrDefault());
         }
-
-        //[HttpPost("AddNewUserRole")]
-        //public async Task<IActionResult> AddNewUserRole(string userId, string roleName)
-        //{
-        //    var result = await _account.AddUserRole(userId, roleName);
-        //    if (result.Succeeded)
-        //        return Ok(result);
-        //    else
-        //        return BadRequest(result.Errors.FirstOrDefault());
-        //} 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(string username, string password,string roleType)
-        {
-            var authResult = await _account.AuthorizeUser(username, password, roleType, _configuration);
-            if(authResult !=  null)
-                return Ok(authResult);
-            else
-                return Unauthorized("username or password incorrect");
-        }
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO model)
         {
@@ -60,5 +41,27 @@ namespace E_TestAPI.Controllers
         }
         #endregion
 
+
+        #region ReadEndPoints
+        [HttpGet("GetAllRoles")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var roleNames = await _account.GetAllRoles();
+            return Ok(roleNames.Select(r => new
+            {
+                r.Id,
+                r.Name
+            }));
+        }
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO model)
+        {
+            var authResult = await _account.AuthUser(model.username, model.password, _configuration);
+            if (authResult != null)
+                return Ok(authResult);
+            else
+                return Unauthorized();
+        }
+        #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using E_Test.Security
+@model TokenDecoder
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,7 +63,17 @@
 					<li class="nav-item"><a href="courses.html" class="nav-link">Courses</a></li>
 					<li class="nav-item"><a href="pricing.html" class="nav-link">Pricing</a></li>
 					<li class="nav-item"><a href="blog.html" class="nav-link">Contact</a></li>
-					<li class="nav-item"><a asp-action="Index" asp-controller="Dashboard" class="nav-link">Dashboard</a></li>
+					@if (Model.RoleName == "Admin")
+					{
+						<li class="nav-item"><a asp-action="Index" asp-controller="Dashboard" class="nav-link">Dashboard</a></li>
+					}
+					@if (string.IsNullOrEmpty(Model.username))
+					{
+						<li class="nav-item"><a asp-action="Login" asp-controller="Account" class="nav-link" style="color:dodgerblue">Login</a></li>
+					}else
+					{
+						<li class="nav-item"><a asp-action="Logout" asp-controller="Account" class="nav-link" style="color:dodgerblue">Logout</a></li>
+					}
 				</ul>
 			</div>
 		</div>

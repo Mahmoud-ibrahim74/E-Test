@@ -1,3 +1,5 @@
+using E_Test.Security;
+
 namespace E_Test
 {
     public class Program
@@ -8,7 +10,9 @@ namespace E_Test
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
+            builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<CookieService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
